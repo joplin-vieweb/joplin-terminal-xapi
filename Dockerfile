@@ -93,17 +93,31 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   && yarn --version
 
 
-FROM nginx1.21.6-node17.6.0-alpine as build
+FROM nginx1.21.6-node17.6.0-alpine as build-joplin
 RUN apk add git
-RUN mkdir /app
-RUN NPM_CONFIG_PREFIX=/app npm install -g joplin
+WORKDIR /app/rest-api /app/joplin
+RUN NPM_CONFIG_PREFIX=/app/joplin npm install -g joplin
+
+FROM nginx1.21.6-node17.6.0-alpine as build-rest-api
+ENV NODE_ENV=production
+WORKDIR /app/rest-api
+COPY ["node-server/package.json", "node-server/package-lock.json", "node-server/npm-shrinkwrap.json*", "./"]
+RUN npm install --production --silent
+COPY node-server/ .
 
 FROM nginx1.21.6-node17.6.0-alpine
-WORKDIR /app
-COPY --from=build /app .
-RUN ln -s /app/bin/joplin /usr/bin/joplin
+# joplin
+WORKDIR /app/joplin
+COPY --from=build-joplin /app/joplin .
+RUN ln -s /app/joplin/bin/joplin /usr/bin/joplin
+# nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
+EXPOSE 8080
+# REST api
+WORKDIR /app/rest-api
+COPY --from=build-rest-api /app/rest-api .
+EXPOSE 8081
+# entrypoint / cmd
 COPY docker-entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/docker-entrypoint.sh
 ENTRYPOINT ["docker-entrypoint.sh"]
