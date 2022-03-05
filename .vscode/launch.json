@@ -8,7 +8,8 @@
             "platform": "node",
             "node": {
                 "package": "${workspaceFolder}/node-server/package.json",
-                "localRoot": "${workspaceFolder}/node-server"
+                "localRoot": "${workspaceFolder}/node-server",
+                "remoteRoot": "/app/rest-api"
             }
         }
     ]

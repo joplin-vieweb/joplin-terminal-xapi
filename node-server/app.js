@@ -11,4 +11,4 @@ app.get("/", (req, res) => {
     res.send("Welcome to joplin-terminal-xapi");
 });
 
-app.listen(port, () => console.log(`Joplin-terminal-xapi listening on port ${port}`))
+app.listen(port, () => console.log(`Joplin-terminal-xapi listening on port ${port} with NODE_ENV = ` + process.env.NODE_ENV))
