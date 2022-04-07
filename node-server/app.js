@@ -3,6 +3,8 @@ const express = require('express');
 const app = express();
 const port = 8081;
 
+require('./joplin-api')(app);
+
 app.get("/ping", (req, res) => {
     res.send("joplin-terminal-xapi says pong");
 });

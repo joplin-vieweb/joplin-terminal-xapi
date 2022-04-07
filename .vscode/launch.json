@@ -9,7 +9,7 @@
             "node": {
                 "package": "${workspaceFolder}/node-server/package.json",
                 "localRoot": "${workspaceFolder}/node-server",
-                "remoteRoot": "/app/rest-api"
+                "remoteRoot": "/app/rest-api",
             }
         }
     ]
