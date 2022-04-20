@@ -11,6 +11,9 @@
   "license": "MIT",
   "dependencies": {
     "child_process": "^1.0.2",
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "ini": "^3.0.0",
+    "sqlite3": "^5.0.4",
+    "webdav-fs": "^4.0.1"
   }
 }

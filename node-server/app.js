@@ -2,8 +2,10 @@
 const express = require('express');
 const app = express();
 const port = 8081;
+app.use(express.json());
 
-require('./joplin-api')(app);
+const joplin = require('./joplin');
+app.use('/joplin', joplin);
 
 app.get("/ping", (req, res) => {
     res.send("joplin-terminal-xapi says pong");
