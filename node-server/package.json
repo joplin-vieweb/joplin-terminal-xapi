@@ -10,7 +10,9 @@
   "author": "gri38",
   "license": "MIT",
   "dependencies": {
+    "async-mutex": "^0.3.2",
     "child_process": "^1.0.2",
+    "cron": "^1.8.2",
     "express": "^4.17.3",
     "ini": "^3.0.0",
     "sqlite3": "^5.0.4",
