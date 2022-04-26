@@ -1,4 +1,4 @@
-FROM node:16-alpine as nginx-node-alpine
+FROM node:12-alpine as nginx-node-alpine
 RUN apk add nginx
 RUN adduser -D -g 'www' www
 RUN mkdir /www
