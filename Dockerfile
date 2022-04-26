@@ -10,12 +10,6 @@ RUN apk add git
 RUN NPM_CONFIG_PREFIX=/app/joplin npm install -g joplin
 
 FROM nginx-node18-alpine as build-rest-api
-# Python is required to build npm sqlite3 on arm7 arch:
-ENV PYTHONUNBUFFERED=1
-RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
-RUN python3 -m ensurepip
-RUN pip3 install --no-cache --upgrade pip setuptools
-
 ENV NODE_ENV=production
 WORKDIR /app/rest-api
 COPY ["node-server/package.json", "node-server/package-lock.json", "node-server/npm-shrinkwrap.json*", "./"]
