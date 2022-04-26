@@ -1,15 +1,22 @@
-FROM node:12-alpine as nginx-node-alpine
+FROM node:18-alpine as nginx-node-alpine
 RUN apk add nginx
 RUN adduser -D -g 'www' www
 RUN mkdir /www
 RUN chown -R www:www /var/lib/nginx
 RUN chown -R www:www /www
 
-FROM nginx-node-alpine as build-joplin
-RUN apk add git
+FROM nginx-node-alpine as build-image
+RUN apk add git g++ make
+ENV PYTHONUNBUFFERED=1
+RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN python3 -m ensurepip
+RUN pip3 install --no-cache --upgrade pip setuptools
+
+
+FROM build-image as build-joplin
 RUN NPM_CONFIG_PREFIX=/app/joplin npm install -g joplin
 
-FROM nginx-node-alpine as build-rest-api
+FROM build-image as build-rest-api
 ENV NODE_ENV=production
 WORKDIR /app/rest-api
 COPY ["node-server/package.json", "node-server/package-lock.json", "node-server/npm-shrinkwrap.json*", "./"]
