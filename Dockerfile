@@ -6,7 +6,7 @@ RUN chown -R www:www /var/lib/nginx
 RUN chown -R www:www /www
 
 FROM nginx-node-alpine as build-image
-RUN apk add git g++ make
+RUN apk add git g++ make vips-dev
 ENV PYTHONUNBUFFERED=1
 RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
 RUN python3 -m ensurepip
