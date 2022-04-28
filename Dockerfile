@@ -24,6 +24,7 @@ RUN npm install --production
 COPY node-server/ .
 
 FROM nginx-node-alpine
+RUN apk add vips
 COPY --from=build-joplin /app/joplin /app/joplin
 RUN ln -s /app/joplin/bin/joplin /usr/bin/joplin
 # nginx
