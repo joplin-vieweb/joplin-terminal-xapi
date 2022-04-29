@@ -41,4 +41,4 @@ EXPOSE 8081
 COPY entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
-CMD ["npm", "start"]
+CMD ["npm", "start", "--silent"]

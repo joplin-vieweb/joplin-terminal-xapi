@@ -28,4 +28,4 @@ RUN npm install --silent
 COPY node-server/ .
 EXPOSE 8081
 # CMD ["/bin/sh"]
-CMD ["npm", "start"]
+CMD ["npm", "start", "--silent"]
