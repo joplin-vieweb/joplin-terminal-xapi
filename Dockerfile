@@ -20,7 +20,7 @@ FROM build-image as build-rest-api
 ENV NODE_ENV=production
 WORKDIR /app/rest-api
 COPY ["node-server/package.json", "node-server/package-lock.json", "node-server/npm-shrinkwrap.json*", "./"]
-RUN npm install --production
+RUN npm install --production --silent
 COPY node-server/ .
 
 FROM nginx-node-alpine
