@@ -14,7 +14,7 @@ RUN pip3 install --no-cache --upgrade pip setuptools
 
 
 FROM build-image as build-joplin
-RUN NPM_CONFIG_PREFIX=/app/joplin npm install -g joplin
+RUN NPM_CONFIG_PREFIX=/app/joplin npm install --production --silent -g joplin
 
 FROM build-image as build-rest-api
 ENV NODE_ENV=production
