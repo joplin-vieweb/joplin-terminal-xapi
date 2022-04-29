@@ -139,17 +139,23 @@ router.post('/synch', async (req, res) => {
 });
 
 router.get('/synch', async (req, res) => {
-    let status;
-    let output;
-    let error;
-    await sync.get_error().then((data) => {error = data} );
-    await sync.get_output().then((data) => {output = data} );
-    await sync.get_status().then((data) => {status = data} );
-    return res.send({
-                        "info": status,
-                        "output": output,
-                        "error": error
-                    });
+    try {
+        let status = await sync.get_status();
+        let output = await sync.get_output();
+        let error = await sync.get_error();
+        return res.send({
+                            "info": status,
+                            "output": output,
+                            "error": error
+                        });
+    }
+    catch (err) {
+        return res.send({
+            "info": "error",
+            "output": "",
+            "error": "error getting synch data"
+        });
+    }
 
 });
 

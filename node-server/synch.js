@@ -86,12 +86,9 @@ class Sync {
             this.status = (new Date()).toISOString().replace('T', ' ').substring(0, 16);
         }).then(async () => {
             console.log('Synch finished: return code: ' + code);
-            let status;
-            let output;
-            let error;
-            await this.get_error().then((data) => {error = data} );
-            await this.get_output().then((data) => {output = data} );
-            await this.get_status().then((data) => {status = data} );
+            let status = await this.get_status();
+            let output = await this.get_output();
+            let error = await this.get_error();
             console.log('    status: ' + status);
             console.log('    stdout: ' + output);
             console.log('    stderr: ' + error);
