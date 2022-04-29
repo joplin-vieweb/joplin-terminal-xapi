@@ -60,7 +60,7 @@ class Sync {
             this.output = "";
             this.error = "";
     
-            let synch_command = spawn("/app/joplin/bin/joplin", ["sync"], { encoding : 'utf8' });
+            let synch_command = spawn("node", ["--no-warnings", "/app/joplin/bin/joplin", "sync"], { encoding : 'utf8' });
             synch_command.stdout.setEncoding('utf8');
             synch_command.stderr.setEncoding('utf8');
             synch_command.stdout.on('data', async (data) => {this.on_output(data)});
