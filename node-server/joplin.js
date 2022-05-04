@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const child_process = require('child_process');
 const sync = require('./synch');
+const util = require('util');
 
 function get_joplin_conf() {
     var get_synch_data = child_process.spawnSync("/app/joplin/bin/joplin", ["config"], { encoding : 'utf8' });
@@ -44,7 +45,6 @@ router.get('/version', (req, res) => {
 
 router.get('/config', (req, res) => {
     var get_synch_data = get_joplin_conf();
-    // var get_synch_data = child_process.spawnSync("/app/joplin/bin/joplin", ["config"], { encoding : 'utf8' });
     if(get_synch_data.error) {
         res.status(500).send(get_synch_data.error);
         return;
@@ -84,7 +84,6 @@ router.post('/config', function(req, res){
 });
 
 router.post('/config/test', async (req, res, next) => {
-    const util = require('util');
     let path = req.body["sync.5.path"];
     let user = req.body["sync.5.username"];
     let password = req.body["sync.5.password"];
@@ -128,12 +127,10 @@ router.post('/config/test', async (req, res, next) => {
     }
     catch (err) {
         return res.send({"status": false, "message": err.message});
-        // return res.status(500).send(err.message);
     }
 });
 
 router.post('/synch', async (req, res) => {
-    // lancer dans un thread la synchro, qui devra retourner info, output et error pour get synch
     sync.start();
     res.send("Sync started")
 });
@@ -156,7 +153,22 @@ router.get('/synch', async (req, res) => {
             "error": "error getting synch data"
         });
     }
+});
 
+router.post('/e2ee/decrypt', async (req, res) => {
+    let password = req.body["password"];
+    console.info("e2ee decrypt with password " + password)
+    const exec_promise = util.promisify(child_process.exec);
+    try {
+        const {stdout, stderr} = await exec_promise('echo "' + password + '" | /app/joplin/bin/joplin e2ee decrypt');
+        console.info("e2ee decrypt out: " + stdout);
+        console.info("e2ee decrypt err: " + stderr);
+        return res.send("e2ee decrypt out: " + stdout + " / " + stderr);
+
+    } catch (err) {
+        console.error("e2ee decrypt error: " + err);
+        return res.send("e2ee decrypt error: " + err);
+    }
 });
 
 
