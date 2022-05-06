@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const child_process = require('child_process');
 const sync = require('./synch');
+const util = require('util');
 
 function get_joplin_conf() {
     var get_synch_data = child_process.spawnSync("/app/joplin/bin/joplin", ["config"], { encoding : 'utf8' });
@@ -14,13 +15,24 @@ function get_joplin_conf() {
     console.log(config);
     
     let target = config["sync.target"];
-    let path = config["sync.5.path"];
-    let user = config["sync.5.username"];
+    if (target) {
+        target = parseInt(target);
+    }
+    else {
+        target = 0;
+    }
     let interval = config["sync.interval"];
-    let password = config["sync.5.password"];
+    let path = ".";
+    let user = ".";
+    let password = ".";
+    if (target == 5 || target == 9) {
+        path = config["sync." + target.toString() + ".path"];
+        user = config["sync." + target.toString() + ".username"];
+        password = config["sync." + target.toString() + ".password"];
+    }
 
     get_synch_data.config = {
-            'target': target ? parseInt(target) : 0,
+            'target': target,
             'path': path ? path : "",
             'user': user ? user : "",
             'interval': interval ? parseInt(interval) : 0,
@@ -44,7 +56,6 @@ router.get('/version', (req, res) => {
 
 router.get('/config', (req, res) => {
     var get_synch_data = get_joplin_conf();
-    // var get_synch_data = child_process.spawnSync("/app/joplin/bin/joplin", ["config"], { encoding : 'utf8' });
     if(get_synch_data.error) {
         res.status(500).send(get_synch_data.error);
         return;
@@ -66,15 +77,17 @@ function set_joplin_conf(param, value) {
 
 router.post('/config', function(req, res){
     let target = req.body["sync.target"];
-    let path = req.body["sync.5.path"];
-    let user = req.body["sync.5.username"];
+    let path = req.body["sync.path"];
+    let user = req.body["sync.username"];
     let interval = req.body["sync.interval"];
-    let password = req.body["sync.5.password"];
+    let password = req.body["sync.password"];
 
     if (target) set_joplin_conf("sync.target", target);
-    if (path) set_joplin_conf("sync.5.path", path);
-    if (user) set_joplin_conf("sync.5.username", user);
-    if (password) set_joplin_conf("sync.5.password", password);
+    if (target == "5" || target == "9") {
+        if (path) set_joplin_conf("sync." + target + ".path", path);
+        if (user) set_joplin_conf("sync." + target + ".username", user);
+        if (password) set_joplin_conf("sync." + target + ".password", password);
+    }
     if (interval) {
         set_joplin_conf("sync.interval", interval);
         sync.set_interval(parseInt(interval));
@@ -84,10 +97,9 @@ router.post('/config', function(req, res){
 });
 
 router.post('/config/test', async (req, res, next) => {
-    const util = require('util');
-    let path = req.body["sync.5.path"];
-    let user = req.body["sync.5.username"];
-    let password = req.body["sync.5.password"];
+    let path = req.body["sync.path"];
+    let user = req.body["sync.username"];
+    let password = req.body["sync.password"];
     
     try {
         if (!password) {
@@ -128,12 +140,10 @@ router.post('/config/test', async (req, res, next) => {
     }
     catch (err) {
         return res.send({"status": false, "message": err.message});
-        // return res.status(500).send(err.message);
     }
 });
 
 router.post('/synch', async (req, res) => {
-    // lancer dans un thread la synchro, qui devra retourner info, output et error pour get synch
     sync.start();
     res.send("Sync started")
 });
