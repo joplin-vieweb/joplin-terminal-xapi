@@ -83,7 +83,7 @@ class Sync {
     
     async on_sync_finished(code) {
         this.mutex.runExclusive(async () => {
-            this.status = (new Date()).toISOString().replace('T', ' ').substring(0, 16);
+            this.status = (new Date()).toISOString();
         }).then(async () => {
             console.log('Synch finished: return code: ' + code);
             let status;
