@@ -14,13 +14,13 @@ RUN pip3 install --no-cache --upgrade pip setuptools
 
 
 FROM build-image as build-joplin
-RUN NPM_CONFIG_PREFIX=/app/joplin npm install -g joplin
+RUN NPM_CONFIG_PREFIX=/app/joplin npm install --production --silent -g joplin
 
 FROM build-image as build-rest-api
 ENV NODE_ENV=production
 WORKDIR /app/rest-api
 COPY ["node-server/package.json", "node-server/package-lock.json", "node-server/npm-shrinkwrap.json*", "./"]
-RUN npm install --production
+RUN npm install --production --silent
 COPY node-server/ .
 
 FROM nginx-node-alpine
@@ -41,4 +41,4 @@ EXPOSE 8081
 COPY entrypoint.sh /usr/bin
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
-CMD ["npm", "start"]
+CMD ["npm", "start", "--silent"]
