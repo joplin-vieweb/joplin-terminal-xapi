@@ -25,7 +25,7 @@ function get_joplin_conf() {
     let path = ".";
     let user = ".";
     let password = ".";
-    if (target == 5 || target == 9) {
+    if (target == 5 || target == 9 || target == 6) {
         path = config["sync." + target.toString() + ".path"];
         user = config["sync." + target.toString() + ".username"];
         password = config["sync." + target.toString() + ".password"];
@@ -83,7 +83,7 @@ router.post('/config', function(req, res){
     let password = req.body["sync.password"];
 
     if (target) set_joplin_conf("sync.target", target);
-    if (target == "5" || target == "9") {
+    if (target == "5" || target == "9" || target == "6") {
         if (path) set_joplin_conf("sync." + target + ".path", path);
         if (user) set_joplin_conf("sync." + target + ".username", user);
         if (password) set_joplin_conf("sync." + target + ".password", password);
