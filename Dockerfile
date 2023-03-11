@@ -24,7 +24,7 @@ RUN npm install --production --silent
 COPY node-server/ .
 
 FROM nginx-node-alpine
-RUN apk add vips
+RUN apk add --no-cache vips vips-cpp
 COPY --from=build-joplin /app/joplin /app/joplin
 RUN ln -s /app/joplin/bin/joplin /usr/bin/joplin
 # nginx
