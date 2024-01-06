@@ -25,10 +25,19 @@ function get_joplin_conf() {
     let path = ".";
     let user = ".";
     let password = ".";
-    if (target == 5 || target == 9 || target == 6) {
-        path = config["sync." + target.toString() + ".path"];
+    let s3bucket = ".";
+    let s3region = ".";
+    if (target == 5 || target == 9 || target == 6 || target == 8) {
+        if (target != 8) {
+            path = config["sync." + target.toString() + ".path"];
+        }
         user = config["sync." + target.toString() + ".username"];
         password = config["sync." + target.toString() + ".password"];
+        if (target == 8) {
+            path = config["sync." + target.toString() + ".url"];
+            s3bucket = config["sync." + target.toString() + ".path"];
+            s3region = config["sync." + target.toString() + ".region"];
+        }
     }
 
     get_synch_data.config = {
@@ -36,7 +45,9 @@ function get_joplin_conf() {
             'path': path ? path : "",
             'user': user ? user : "",
             'interval': interval ? parseInt(interval) : 0,
-            'password': password ? password : ''
+            'password': password ? password : '',
+            's3bucket': s3bucket ? s3bucket : '',
+            's3region': s3region ? s3region : '',
         };
 
     return get_synch_data;
@@ -81,12 +92,25 @@ router.post('/config', function(req, res){
     let user = req.body["sync.username"];
     let interval = req.body["sync.interval"];
     let password = req.body["sync.password"];
+    let s3bucket = "";
+    let s3region = "";
+    if (target == "8") {
+        s3bucket = req.body["sync.s3bucket"];
+        s3region = req.body["sync.s3reigon"];
+    }
 
     if (target) set_joplin_conf("sync.target", target);
-    if (target == "5" || target == "9" || target == "6") {
-        if (path) set_joplin_conf("sync." + target + ".path", path);
+    if (target == "5" || target == "9" || target == "6" || target == "8") {
+        if (target != "8") {
+            if (path) set_joplin_conf("sync." + target + ".path", path);
+        }
         if (user) set_joplin_conf("sync." + target + ".username", user);
         if (password) set_joplin_conf("sync." + target + ".password", password);
+        if (target == "8") {
+            if (path) set_joplin_conf("sync." + target + ".url", path);
+            if (s3bucket) set_joplin_conf("sync." + target + ".path", s3bucket);
+            if (s3region) set_joplin_conf("sync." + target + ".region", s3region);
+        }
     }
     if (interval) {
         set_joplin_conf("sync.interval", interval);
